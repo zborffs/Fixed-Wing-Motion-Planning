@@ -80,7 +80,7 @@ classdef AircraftController < handle
             % coefficients for VERY basic lead controller (s+2)/(s+1)
             zero_loc = 4; %4 zero_loc = 2 means zero is actually at -2
             pole_loc = 3; %3
-            gain = 2; % 3
+            gain = 3; % 3
             A = 2 * (pole_loc + T); % 1 represents pole location
             B = 2 * (-pole_loc + T); % 1 represents pole location
             C = zero_loc + T; % 2 represents zero location
@@ -242,7 +242,7 @@ classdef AircraftController < handle
             % update the previous minimum obstacle distance member variable
             obj.rmin_prev = rmin;
             
-            disp("t : " + t + ", u : " + u + ", v : " + v + ", w : " + w + ", x : " + aircraft.x + ", y : " + aircraft.y + ", z : " + aircraft.z);
+%             disp("t : " + t + ", u : " + u + ", v : " + v + ", w : " + w + ", x : " + aircraft.x + ", y : " + aircraft.y + ", z : " + aircraft.z);
             
             % make sure we only output our capacity
             u = max(min(aircraft.u_max, u), 0);

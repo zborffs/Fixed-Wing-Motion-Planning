@@ -121,8 +121,8 @@ draw(aircraft, env);
 controller = AircraftController();
 
 %% Instantiate Simulation object and perform simulation
-target_x_pos = 0; % in meters
-target_y_pos = 0; % in meters
+target_x_pos = 80; % in meters
+target_y_pos = 80; % in meters
 target_z_pos = 40; % in meters
 target_abs_tol = 3; % in meters
 sim = Simulation(env, aircraft, controller, ...
@@ -136,3 +136,5 @@ sim.plot();
 
 % animate the simulation
 sim.animate();
+
+sim.falsify()

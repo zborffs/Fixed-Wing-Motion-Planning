@@ -21,6 +21,9 @@ classdef Simulation < handle
         % Simulation output
         t % time vector
         out % the state variables at each time instant
+        
+        % S-Taliro output
+        staliro_results % the results from an staliro simulation
     end
     
     methods
@@ -47,6 +50,7 @@ classdef Simulation < handle
             % variables should be the empty-set
             obj.t = [];
             obj.out = [];
+            obj.staliro_results = [];
         end
         
         function simulate(obj)
@@ -173,6 +177,36 @@ classdef Simulation < handle
             plot3(x,y,z); 
             plot(target_box, 'FaceColor', 'green', 'FaceAlpha', 0.1);
             hold off;
+        end
+
+        function falsify(obj)
+            % create a struct to hold the object information
+            p = struct('x_des', obj.x_des, 'y_des', obj.y_des, 'z_des', obj.z_des, ... 
+                        'abs_tol', obj.abs_tol, 'aircraft', obj.aircraft, ...
+                        'controller', obj.controller, 'environment', obj.env);
+
+            % create handler to make interface of dubins3d function match
+            % that expected by the ode45 solver
+            model = @(t, state) dubins3d(t, state, p);
+            
+            tspan = 50;
+            X0 = [
+                obj.aircraft.x - 5 obj.aircraft.x + 5;
+                obj.aircraft.y - 5 obj.aircraft.y + 5;
+                obj.aircraft.z - 5 obj.aircraft.z + 5;
+                obj.aircraft.theta - deg2rad(180) obj.aircraft.theta + deg2rad(180);
+                obj.aircraft.alpha - deg2rad(180) obj.aircraft.alpha + deg2rad(180)];
+            cp_array = [];
+            input_range = [];
+            
+            phi = '<>a';
+            pred(1).str = 'a';
+            pred(1).A = eye(3,5);
+            pred(1).b = [obj.x_des + obj.abs_tol; obj.y_des + obj.abs_tol; obj.z_des + obj.abs_tol];
+            opt = staliro_options();
+            opt.runs = 1;
+            
+            obj.staliro_results = staliro(model,X0,input_range,cp_array,phi,pred,tspan,opt);
         end
     end
 end
